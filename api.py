@@ -2,12 +2,15 @@ import json
 
 from flask import Flask
 from flask_restx import Api, Resource
+from flask_cors import CORS
+from gevent.pywsgi import WSGIServer
 
 from scraper import Scraper
 from algorithms import Algorithms
 
 flask_app = Flask(__name__)
 app = Api(app=flask_app)
+CORS(flask_app)
 
 
 @app.route('/api/scrape/imdb/top')
@@ -37,4 +40,8 @@ class FizzBuzz(Resource):
 
 
 if __name__ == '__main__':
-    flask_app.run(debug=False)
+    # Debug/Development
+    # app.run(debug=True, host="0.0.0.0", port="5000")
+    # Production
+    http_server = WSGIServer(('', 8000), flask_app)
+    http_server.serve_forever()
